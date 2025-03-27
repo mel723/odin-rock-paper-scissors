@@ -50,7 +50,21 @@ function playRound(humanChoice, computerChoice) {
   }
 }
 
-const humanSelection = getHumanChoice();
-const computerSelection = getComputerChoice();
+function playGame() {
+  for (let i = 0; i < 5; i++) {
+    const humanSelection = getHumanChoice();
+    const computerSelection = getComputerChoice();
+    
+    playRound(humanSelection, computerSelection);
+  }
 
-playRound(humanSelection, computerSelection);
+  if (humanScore > computerScore) {
+    console.log(`Congratulations! You won ${humanScore} out of 5 times.`);
+  } else if (humanScore < computerScore) {
+    console.log(`Too bad! The computer won ${computerScore} out of 5 times.`);
+  } else {
+    console.log(`You and the computer tied with a score of ${humanScore}!`);
+  }
+}
+
+playGame();
