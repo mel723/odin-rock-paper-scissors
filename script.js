@@ -19,6 +19,7 @@ function getHumanChoice() {
 
 let humanScore = 0;
 let computerScore = 0;
+const score = document.querySelector("#score");
 
 function playRound(humanChoice, computerChoice) {
   const resultContainer = document.querySelector("#result-container");
@@ -54,6 +55,7 @@ function playRound(humanChoice, computerChoice) {
   }
   
   resultContainer.appendChild(newResultText);
+  score.textContent = `Human: ${humanScore} - Computer: ${computerScore}`;
 }
 
 function playGame() {
