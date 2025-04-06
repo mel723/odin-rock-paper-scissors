@@ -21,10 +21,18 @@ let humanScore = 0;
 let computerScore = 0;
 
 function playRound(humanChoice, computerChoice) {
+  const resultContainer = document.querySelector("#result-container");
+  
+  const oldResultText = resultContainer.lastChild;
+  if (oldResultText) {
+    resultContainer.removeChild(oldResultText);
+  }
+
   humanChoice = humanChoice.toLowerCase();
+  const newResultText = document.createElement("p");
 
   if (humanChoice === computerChoice) {
-    console.log(`You tied! Both you and the computer chose ${humanChoice}`);
+    newResultText.textContent = `You tied! Both you and the computer chose ${humanChoice}`;
   } else {
     let hasWon = false;
 
@@ -35,19 +43,17 @@ function playRound(humanChoice, computerChoice) {
     ) {
       hasWon = true;
     }
-
-    let message;
-
+    
     if (hasWon) {
-      message = `You won! ${humanChoice} beats ${computerChoice}`;
+      newResultText.textContent = `You won! ${humanChoice} beats ${computerChoice}`;
       humanScore++;
     } else {
-      message = `You lost! ${computerChoice} beats ${humanChoice}`;
+      newResultText.textContent = `You lost! ${computerChoice} beats ${humanChoice}`;
       computerScore++;
     }
-    
-    console.log(message);
   }
+  
+  resultContainer.appendChild(newResultText);
 }
 
 function playGame() {
