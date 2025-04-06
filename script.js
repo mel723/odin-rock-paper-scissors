@@ -1,3 +1,19 @@
+let humanScore = 0;
+let computerScore = 0;
+
+const btnContainer = document.querySelector("#btn-container");
+btnContainer.addEventListener("click", (e) => {
+  const humanChoice = e.target.id;
+
+  if (
+    humanChoice === "rock" || 
+    humanChoice === "paper" || 
+    humanChoice === "scissors"
+  ) {
+    playRound(humanChoice, getComputerChoice());
+  }
+});
+
 function getComputerChoice() {
   const randomNumber = Math.floor(Math.random() * 3);
 
@@ -13,71 +29,61 @@ function getComputerChoice() {
   }
 }
 
-function getHumanChoice() {
-  return prompt("Rock, paper, or scissors?")
+function playRound(humanChoice, computerChoice) {
+  humanChoice = humanChoice.toLowerCase();
+
+  let result;
+  if (humanChoice === computerChoice) {
+    result = `You tied! Both you and the computer chose ${humanChoice}`;
+  } else if (checkHumanWin(humanChoice, computerChoice)) {
+    result = `You won! ${humanChoice} beats ${computerChoice}`;
+    humanScore++;
+  } else {
+    result = `You lost! ${humanChoice} loses to ${computerChoice}`;
+    computerScore++;
+  }
+  
+  displayRoundResult(result);
+  score.textContent = `Human: ${humanScore} - Computer: ${computerScore}`;
+
+  if (humanScore >= 5 || computerScore >= 5) {
+    score.textContent = 
+      `${humanScore >= 5 ? "You" : "Computer"} Win! ${score.textContent}`;
+    endGame();
+  }
 }
 
-let humanScore = 0;
-let computerScore = 0;
-const score = document.querySelector("#score");
+function checkHumanWin(humanChoice, computerChoice) {
+  return humanChoice === "rock" && computerChoice === "scissors" || 
+    humanChoice === "paper" && computerChoice === "rock" ||
+    humanChoice === "scissors" && computerChoice === "paper";
+}
 
-const btnContainer = document.querySelector("#btn-container");
-btnContainer.addEventListener("click", (e) => {
-  const id = e.target.id;
-
-  if (id === "rock" || id === "paper" || id === "scissors") {
-    playRound(e.target.id, getComputerChoice());
-  }
-});
-
-function playRound(humanChoice, computerChoice) {
+function displayRoundResult(result) {
   const resultContainer = document.querySelector("#result-container");
   
   const oldResultText = resultContainer.lastChild;
   if (oldResultText) {
     resultContainer.removeChild(oldResultText);
   }
-
-  humanChoice = humanChoice.toLowerCase();
-  const newResultText = document.createElement("p");
-
-  if (humanChoice === computerChoice) {
-    newResultText.textContent = `You tied! Both you and the computer chose ${humanChoice}`;
-  } else {
-    let hasWon = false;
-
-    if (
-      humanChoice === "rock" && computerChoice === "scissors" || 
-      humanChoice === "paper" && computerChoice === "rock" ||
-      humanChoice === "scissors" && computerChoice === "paper"
-    ) {
-      hasWon = true;
-    }
-    
-    if (hasWon) {
-      newResultText.textContent = `You won! ${humanChoice} beats ${computerChoice}`;
-      humanScore++;
-    } else {
-      newResultText.textContent = `You lost! ${computerChoice} beats ${humanChoice}`;
-      computerScore++;
-    }
+  
+  if (!result) {
+    return;
   }
   
+  const newResultText = document.createElement("p");
+  newResultText.textContent = result;
   resultContainer.appendChild(newResultText);
-  score.textContent = `Human: ${humanScore} - Computer: ${computerScore}`;
-
-  if (humanScore >= 5 || computerScore >= 5) {
-    score.textContent = `${humanScore >= 5 ? "Human" : "Computer"} Win! ${score.textContent}`;
-    endGame();
-  }
 }
 
 function endGame() {
+  // Disable all buttons
   const buttons = document.querySelectorAll("div#btn-container > button");
   buttons.forEach((button) => {
     button.setAttribute("disabled", "true");
   });
 
+  // Add button to reset game
   const resetButton = document.createElement("button");
   resetButton.textContent = "Reset"
   resetButton.setAttribute("id", "reset-btn");
@@ -90,22 +96,18 @@ function resetGame() {
   humanScore = 0;
   computerScore = 0;
 
+  // Clear result text
+  displayRoundResult();
+
+  // Clear score text
+  const score = document.querySelector("#score");
+  score.textContent = "";
+  
   // Re-enable buttons
   const buttons = document.querySelectorAll("div#btn-container > button");
   buttons.forEach((button) => {
     button.removeAttribute("disabled");
   });
-
-  // Clear result text
-  const resultContainer = document.querySelector("#result-container");
-  const oldResultText = resultContainer.lastChild;
-  if (oldResultText) {
-    resultContainer.removeChild(oldResultText);
-  }
-
-  // Clear score text
-  const score = document.querySelector("#score");
-  score.textContent = "";
 
   // Remove reset button
   const resetButton = document.querySelector("#reset-btn");
@@ -113,21 +115,4 @@ function resetGame() {
     return;
   }
   resetButton.remove();
-}
-
-function playGame() {
-  for (let i = 0; i < 5; i++) {
-    const humanSelection = getHumanChoice();
-    const computerSelection = getComputerChoice();
-    
-    playRound(humanSelection, computerSelection);
-  }
-
-  if (humanScore > computerScore) {
-    console.log(`Congratulations! You won ${humanScore} out of 5 times.`);
-  } else if (humanScore < computerScore) {
-    console.log(`Too bad! The computer won ${computerScore} out of 5 times.`);
-  } else {
-    console.log(`You and the computer tied with a score of ${humanScore}!`);
-  }
 }
