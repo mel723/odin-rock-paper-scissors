@@ -21,6 +21,15 @@ let humanScore = 0;
 let computerScore = 0;
 const score = document.querySelector("#score");
 
+const btnContainer = document.querySelector("#btn-container");
+btnContainer.addEventListener("click", (e) => {
+  const id = e.target.id;
+
+  if (id === "rock" || id === "paper" || id === "scissors") {
+    playRound(e.target.id, getComputerChoice());
+  }
+});
+
 function playRound(humanChoice, computerChoice) {
   const resultContainer = document.querySelector("#result-container");
   
@@ -56,6 +65,54 @@ function playRound(humanChoice, computerChoice) {
   
   resultContainer.appendChild(newResultText);
   score.textContent = `Human: ${humanScore} - Computer: ${computerScore}`;
+
+  if (humanScore >= 5 || computerScore >= 5) {
+    score.textContent = `${humanScore >= 5 ? "Human" : "Computer"} Win! ${score.textContent}`;
+    endGame();
+  }
+}
+
+function endGame() {
+  const buttons = document.querySelectorAll("div#btn-container > button");
+  buttons.forEach((button) => {
+    button.setAttribute("disabled", "true");
+  });
+
+  const resetButton = document.createElement("button");
+  resetButton.textContent = "Reset"
+  resetButton.setAttribute("id", "reset-btn");
+  resetButton.addEventListener("click", resetGame);
+  btnContainer.appendChild(resetButton);
+}
+
+function resetGame() {
+  // Reset scores
+  humanScore = 0;
+  computerScore = 0;
+
+  // Re-enable buttons
+  const buttons = document.querySelectorAll("div#btn-container > button");
+  buttons.forEach((button) => {
+    button.removeAttribute("disabled");
+  });
+
+  // Clear result text
+  const resultContainer = document.querySelector("#result-container");
+  const oldResultText = resultContainer.lastChild;
+  if (oldResultText) {
+    resultContainer.removeChild(oldResultText);
+  }
+
+  // Clear score text
+  const score = document.querySelector("#score");
+  score.textContent = "";
+
+  // Remove reset button
+  const resetButton = document.querySelector("#reset-btn");
+  if (!resetButton) {
+    return;
+  }
+  resetButton.remove();
 }
 
 function playGame() {
@@ -74,8 +131,3 @@ function playGame() {
     console.log(`You and the computer tied with a score of ${humanScore}!`);
   }
 }
-
-const btnContainer = document.querySelector("#btn-container");
-btnContainer.addEventListener("click", (e) => {
-  playRound(e.target.id, getComputerChoice());
-});
